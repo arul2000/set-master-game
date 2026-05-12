@@ -181,6 +181,13 @@ html, body { width: 100%; height: 100%; background: var(--bg-dark); color: var(-
   font-family: var(--font); transition: all .15s;
 }
 .home-btn-img:hover { background: rgba(88,166,255,.08); border-color: rgba(88,166,255,.6); transform: translateY(-1px); }
+.home-btn-download {
+  width: 100%; padding: 11px; border-radius: 14px; cursor: pointer;
+  background: rgba(255,224,102,.12); border: 2px solid rgba(255,224,102,.55);
+  color: #ffe066; font-size: 13px; font-weight: 700; letter-spacing: 1px;
+  font-family: var(--font); transition: all .15s;
+}
+.home-btn-download:hover { background: rgba(255,224,102,.22); border-color: rgba(255,224,102,.85); transform: translateY(-1px); }
 /* ══════════════════════════════════════════
    IMAGE MANAGER SCREEN
 ══════════════════════════════════════════ */
@@ -2136,29 +2143,42 @@ html, body { width: 100%; height: 100%; background: var(--bg-dark); color: var(-
   --fan-ty:  0px;
 }
 
-/* Filled cards — visible + card shadow */
+/* Filled cards — visible without a drop shadow */
 #gp1-srow .g-slot.filled,
 #gai-srow  .g-slot.filled {
   opacity: 1 !important;
-  box-shadow: 3px 5px 14px rgba(0,0,0,.55),
-              inset 0 1px 0 rgba(255,255,255,.22) !important;
+  box-shadow: none !important;
 }
 
-/* Fan positions — 7 cards, 24px step, ±18° spread */
-#gp1-srow .g-slot:nth-child(1), #gai-srow .g-slot:nth-child(1)
+/* Player slots keep the arched fan; bot slots stay straight. */
+#gp1-srow .g-slot:nth-child(1)
   { left:calc(50% - 93px); z-index:1; --fan-rot:-18deg; --fan-ty:16px; }
-#gp1-srow .g-slot:nth-child(2), #gai-srow .g-slot:nth-child(2)
+#gp1-srow .g-slot:nth-child(2)
   { left:calc(50% - 69px); z-index:2; --fan-rot:-12deg; --fan-ty:7px;  }
-#gp1-srow .g-slot:nth-child(3), #gai-srow .g-slot:nth-child(3)
+#gp1-srow .g-slot:nth-child(3)
   { left:calc(50% - 45px); z-index:3; --fan-rot:-6deg;  --fan-ty:2px;  }
-#gp1-srow .g-slot:nth-child(4), #gai-srow .g-slot:nth-child(4)
+#gp1-srow .g-slot:nth-child(4)
   { left:calc(50% - 21px); z-index:4; --fan-rot:0deg;   --fan-ty:0px;  }
-#gp1-srow .g-slot:nth-child(5), #gai-srow .g-slot:nth-child(5)
+#gp1-srow .g-slot:nth-child(5)
   { left:calc(50% + 3px);  z-index:3; --fan-rot:6deg;   --fan-ty:2px;  }
-#gp1-srow .g-slot:nth-child(6), #gai-srow .g-slot:nth-child(6)
+#gp1-srow .g-slot:nth-child(6)
   { left:calc(50% + 27px); z-index:2; --fan-rot:12deg;  --fan-ty:7px;  }
-#gp1-srow .g-slot:nth-child(7), #gai-srow .g-slot:nth-child(7)
+#gp1-srow .g-slot:nth-child(7)
   { left:calc(50% + 51px); z-index:1; --fan-rot:18deg;  --fan-ty:16px; }
+#gai-srow .g-slot:nth-child(1)
+  { left:calc(50% - 93px); z-index:1; --fan-rot:0deg; --fan-ty:0px; }
+#gai-srow .g-slot:nth-child(2)
+  { left:calc(50% - 69px); z-index:2; --fan-rot:0deg; --fan-ty:0px; }
+#gai-srow .g-slot:nth-child(3)
+  { left:calc(50% - 45px); z-index:3; --fan-rot:0deg; --fan-ty:0px; }
+#gai-srow .g-slot:nth-child(4)
+  { left:calc(50% - 21px); z-index:4; --fan-rot:0deg; --fan-ty:0px; }
+#gai-srow .g-slot:nth-child(5)
+  { left:calc(50% + 3px);  z-index:3; --fan-rot:0deg; --fan-ty:0px; }
+#gai-srow .g-slot:nth-child(6)
+  { left:calc(50% + 27px); z-index:2; --fan-rot:0deg; --fan-ty:0px; }
+#gai-srow .g-slot:nth-child(7)
+  { left:calc(50% + 51px); z-index:1; --fan-rot:0deg; --fan-ty:0px; }
 
 /* Land-pop uses custom props so rotation is preserved during animation */
 @keyframes fan-slot-land {
@@ -2221,6 +2241,7 @@ html, body { width: 100%; height: 100%; background: var(--bg-dark); color: var(-
         <button class="home-btn-play" id="homeLevelBtn" onclick="openLevelPopup()">▶ &nbsp; <span id="homeLevelNumber">Level 1</span></button>
         <button class="home-btn-edit" onclick="homeEditor()">✦ &nbsp; LEVEL EDITOR</button>
         <button class="home-btn-img" onclick="openImageManager()">🖼 &nbsp; MANAGER</button>
+        <button class="home-btn-download" onclick="topbarDownload()">⬇ &nbsp; DOWNLOAD</button>
       </div>
     </div>
   </div>
@@ -2507,6 +2528,11 @@ box-shadow:0 3px 10px rgba(0,0,0,.35);
               <div class="g-avatar av-active av-active-p1" id="g-avatar-p1" style="background: none; border: none; width: 54px; height: 54px; font-size: 30px; border-radius: 0px;"></div>
             </div>
           </div>
+          <div class="g-mrow" id="g-mrow-wrap">
+            <span class="g-tlbl" id="gtlbl">Your Turn</span>
+            <div id="g-move-dots-container" style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;"><div class="g-mdot-num active"></div><div class="g-mdot-num"></div><div class="g-mdot-num"></div></div>
+            <span id="g-moves-label" style="font-size: 9px; color: rgb(255, 224, 102); font-weight: 700; margin-left: 2px;">3 left</span>
+          </div>
           <div class="g-spanel g-aip">
             <div class="g-splbl">
               <span style="width:6px;height:6px;border-radius:50%;background:#3a7bd5;display:inline-block"></span>
@@ -2516,11 +2542,6 @@ box-shadow:0 3px 10px rgba(0,0,0,.35);
             <div class="g-srow" id="gai-srow"><div class="g-slot"></div><div class="g-slot"></div><div class="g-slot"></div><div class="g-slot"></div><div class="g-slot"></div><div class="g-slot"></div><div class="g-slot"></div></div>
           </div>
           <div id="g-bot-hand-bar" style="display: flex; gap: 4px; align-items: center; justify-content: center; flex-shrink: 0; padding: 2px 4px 1px; min-height: 24px; height: 24px; flex-wrap: nowrap; overflow: hidden; visibility: hidden;"></div>
-          <div class="g-mrow" id="g-mrow-wrap">
-            <span class="g-tlbl" id="gtlbl">Your Turn</span>
-            <div id="g-move-dots-container" style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;"><div class="g-mdot-num active"></div><div class="g-mdot-num"></div><div class="g-mdot-num"></div></div>
-            <span id="g-moves-label" style="font-size: 9px; color: rgb(255, 224, 102); font-weight: 700; margin-left: 2px;">3 left</span>
-          </div>
           <div class="g-gwrap"><div id="g-grid" style="position: relative; width: 322px; height: 204px; transform: scale(0.869565); transform-origin: left top; margin-left: 0px; margin-top: 31px;"><div class="g-card locked" data-cell="0_2" data-key="0_2" data-layer="2" style="left: 91px; top: 1px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 1;"></div><div class="g-card locked" data-cell="0_2" data-key="0_2" data-layer="1" style="left: 91px; top: 35px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 2;"></div><div class="g-card accessible pickable" data-cell="0_2" data-key="0_2" data-layer="0" style="left: 91px; top: 69px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 3;"></div><div class="g-card locked" data-cell="0_3" data-key="0_3" data-layer="2" style="left: 137px; top: 69px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 1;"></div><div class="g-card locked" data-cell="0_3" data-key="0_3" data-layer="1" style="left: 137px; top: 35px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 2;"></div><div class="g-card accessible pickable" data-cell="0_3" data-key="0_3" data-layer="0" style="left: 137px; top: 1px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 3;"></div><div class="g-card locked" data-cell="0_4" data-key="0_4" data-layer="2" style="left: 183px; top: 1px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 1;"></div><div class="g-card locked" data-cell="0_4" data-key="0_4" data-layer="1" style="left: 183px; top: 35px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 2;"></div><div class="g-card accessible pickable" data-cell="0_4" data-key="0_4" data-layer="0" style="left: 183px; top: 69px; width: 48px; height: 68px; background: url(&quot;&quot;) center center / cover no-repeat; z-index: 3;"></div></div></div>
           <div class="g-spanel g-p1p">
             <div class="g-splbl">
@@ -18202,8 +18223,8 @@ window.addEventListener('load', function(){
 
   var FAN_ROWS = ['gp1-srow','gai-srow'];
 
-  // Fan geometry — 7 slots, 24 px horizontal step, ±18° arc
-  var FAN = [
+  // Player keeps the arched fan; bot uses the same x positions in a straight row.
+  var PLAYER_FAN = [
     { rot:-18, ty:16, zi:1, left:'calc(50% - 93px)' },
     { rot:-12, ty:7,  zi:2, left:'calc(50% - 69px)' },
     { rot:-6,  ty:2,  zi:3, left:'calc(50% - 45px)' },
@@ -18212,6 +18233,9 @@ window.addEventListener('load', function(){
     { rot:12,  ty:7,  zi:2, left:'calc(50% + 27px)' },
     { rot:18,  ty:16, zi:1, left:'calc(50% + 51px)'  },
   ];
+  var BOT_STRAIGHT = PLAYER_FAN.map(function(cfg){
+    return { rot:0, ty:0, zi:cfg.zi, left:cfg.left };
+  });
 
   function applyFan(rowId) {
     var row = document.getElementById(rowId);
@@ -18225,9 +18249,10 @@ window.addEventListener('load', function(){
     row.style.setProperty('overflow','visible','important');
 
     var slots = row.children;
+    var geometry = rowId === 'gai-srow' ? BOT_STRAIGHT : PLAYER_FAN;
     for(var i = 0; i < slots.length; i++){
       var el  = slots[i];
-      var cfg = FAN[i] || FAN[FAN.length-1];
+      var cfg = geometry[i] || geometry[geometry.length-1];
       var isFilled = el.classList.contains('filled');
 
       // Position & shape
@@ -18262,8 +18287,7 @@ window.addEventListener('load', function(){
         var cardBg = skin ? ('url(' + skin + ') center/cover no-repeat') : (def.hex || el.style.background || '#555');
         el.style.setProperty('background', cardBg, 'important');
         el.style.setProperty('opacity','1','important');
-        el.style.setProperty('box-shadow',
-          '3px 5px 14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22)','important');
+        el.style.setProperty('box-shadow','none','important');
         el.style.removeProperty('pointer-events');
       } else {
         el.style.setProperty('background','transparent','important');
