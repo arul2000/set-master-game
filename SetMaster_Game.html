@@ -5427,6 +5427,7 @@ function gRenderSlots(slots, rowId) {
     if (slots[i]) {
       el.classList.add('filled');
       const color   = slots[i].color;
+      el.dataset.color = color;
       const _slotDef = CDEFS[color] || SDEFS[color] || {hex:'#555', req:'?'};
       const skinUrl  = imGetCardBg(color);
       if (skinUrl) {
@@ -18237,7 +18238,6 @@ window.addEventListener('load', function(){
       el.style.setProperty('height','60px','important');
       el.style.setProperty('border-radius','8px','important');
       el.style.setProperty('border','none','important');
-      el.style.setProperty('background','transparent','important');
       el.style.setProperty('transform-origin','bottom center','important');
       el.style.setProperty('overflow','hidden','important');
       el.style.setProperty('z-index', String(cfg.zi),'important');
@@ -18252,13 +18252,21 @@ window.addEventListener('load', function(){
           'rotate('+cfg.rot+'deg) translateY('+cfg.ty+'px)','important');
       }
 
-      // Visibility
+      // Visibility and card art. The static fan CSS uses !important for empty
+      // slots, so filled cards need an inline !important background or the
+      // collected card becomes transparent after landing in the player slot.
       if(isFilled){
+        var color = el.dataset ? el.dataset.color : '';
+        var def = (typeof CDEFS !== 'undefined' && CDEFS[color]) || (typeof SDEFS !== 'undefined' && SDEFS[color]) || { hex:'#555' };
+        var skin = (typeof imGetCardBg === 'function') ? imGetCardBg(color) : '';
+        var cardBg = skin ? ('url(' + skin + ') center/cover no-repeat') : (def.hex || el.style.background || '#555');
+        el.style.setProperty('background', cardBg, 'important');
         el.style.setProperty('opacity','1','important');
         el.style.setProperty('box-shadow',
           '3px 5px 14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22)','important');
         el.style.removeProperty('pointer-events');
       } else {
+        el.style.setProperty('background','transparent','important');
         el.style.setProperty('opacity','0','important');
         el.style.setProperty('box-shadow','none','important');
         el.style.setProperty('pointer-events','none','important');
